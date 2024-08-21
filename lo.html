@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Management</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("cafe.jfif"); /* Replace with your background image path */
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        header, .main-content, footer {
+            display: none;
+        }
+        header {
+            background-color: rgba(210, 105, 30, 0.8); /* Semi-transparent background */
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+        }
+        nav {
+            background-color: rgba(139, 69, 19, 0.8); /* Semi-transparent background */
+            overflow: hidden;
+            width: 100%;
+        }
+        nav a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .menu, .order, .billing, .product-list, .contact {
+            margin-bottom: 40px;
+        }
+        .menu h2, .order h2, .billing h2, .product-list h2, .contact h2 {
+            color: #d2691e;
+            border-bottom: 2px solid #d2691e;
+            padding-bottom: 10px;
+        }
+        .menu-item {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #d2691e;
+        }
+        .menu-item h3 {
+            margin: 0;
+        }
+        .order form, .billing form, .product-list form {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #d2691e;
+        }
+        .order form input, .order form select, .order form textarea,
+        .billing form input, .billing form select, .billing form textarea,
+        .product-list form input, .product-list form select, .product-list form textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            width: calc(100% - 22px);
+        }
+        .order form button, .billing form button, .product-list form button {
+            padding: 10px;
+            background-color: #d2691e;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .order form button:hover, .billing form button:hover, .product-list form button:hover {
+            background-color: #b25013;
+        }
+        footer {
+            background-color: rgba(139, 69, 19, 0.8); /* Semi-transparent background */
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        /* Login Styles */
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        .login-container img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: calc(100% - 10px);
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        // Define your username and password here (not secure for production)
+        const storedUsername = "admin";
+        const storedPassword = "password123";
+
+        // Function to check login
+        function checkLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === storedUsername && password === storedPassword) {
+                document.querySelector('.login-container').style.display = 'none';
+                document.querySelector('header').style.display = 'block';
+                document.querySelector('.main-content').style.display = 'block';
+                document.querySelector('footer').style.display = 'block';
+                document.body.style.justifyContent = 'flex-start';
+            } else {
+                alert("Invalid username or password.");
+            }
+        }
+
+        // Function to store order data
+        function storeOrderData(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const drink = document.getElementById('drink').value;
+            const message = document.getElementById('message').value;
+
+            const orderData = {
+                name,
+                email,
+                drink,
+                message
+            };
+
+            localStorage.setItem('orderData', JSON.stringify(orderData));
+            alert('Order stored successfully!');
+        }
+
+        // Function to store billing data
+        function storeBillingData(event) {
+            event.preventDefault();
+            const billId = document.getElementById('bill-id').value;
+            const totalAmount = document.getElementById('total-amount').value;
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            const billingData = {
+                billId,
+                totalAmount,
+                paymentMethod
+            };
+
+            localStorage.setItem('billingData', JSON.stringify(billingData));
+            alert('Billing data stored successfully!');
+        }
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <img src="C:\Users\ravee\OneDrive\Pictures\Saved Pictures/urban.jfif" alt="Café Image"> 
+        <h2>Login</h2>
+        <form onsubmit="event.preventDefault(); checkLogin();">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <header>
+        <h1>𝕋𝕙𝕖 𝕌𝕣𝕓𝕒𝕟 𝕆𝕒𝕤𝕚𝕤</h1>
+    </header>
+    <nav>
+        <a href="#menu">Menu</a>
+        <a href="#order">Order</a>
+        <a href="#billing">Billing</a>
+        <a href="#product-list">Product List</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <div class="main-content">
+        <div class="container">
+            <section id="menu" class="menu">
+                <h2>Menu</h2>
+                <div class="menu-item">
+                    <h3>Espresso</h3>
+                    <p>$3.00</p>
+                </div>
+                <div class="menu-item">
+                    <h3>Latte</h3>
+                    <p>$4.00</p>
+                </div>
+                <div class="menu-item">
+                    <h3>Cappuccino</h3>
+                    <p>$4.50</p>
+                </div>
+                <div class="menu-item">
+                    <h3>Tea</h3>
+                    <p>$2.50</p>
+                </div>
+            </section>
+            <section id="order" class="order">
+                <h2>Place Your Order</h2>
+                <form onsubmit="storeOrderData(event);">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <label for="drink">Select Drink:</label>
+                    <select id="drink" name="drink">
+                        <option value="espresso">Espresso</option>
+                        <option value="latte">Latte</option>
+                        <option value="cappuccino">Cappuccino</option>
+                        <option value="tea">Tea</option>
+                    </select>
+                    <label for="message">Special Instructions:</label>
+                    <textarea id="message" name="message"></textarea>
+                    <button type="submit">Submit Order</button>
+                </form>
+            </section>
+            <section id="billing" class="billing">
+                <h2>Billing</h2>
+                <form onsubmit="storeBillingData(event);">
+                    <label for="bill-id">Bill ID:</label>
+                    <input type="text" id="bill-id" name="bill-id" required>
+                    <label for="total-amount">Total Amount:</label>
+                    <input type="text" id="total-amount" name="total-amount" required>
+                    <label for="payment-method">Payment Method:</label>
+                    <select id="payment-method" name="payment-method">
+                        <option value="cash">Cash</option>
+                        <option value="card">Card</option>
+                        <option value="upi">UPI</option>
+                    </select>
+                    <button type="submit">Generate Bill</button>
+                </form>
+            </section>
+            <section id="product-list" class="product-list">
+                <h2>Product List</h2>
+                <form>
+                    <label for="product-name">Product Name:</label>
+                    <input type="text" id="product-name" name="product-name" required>
+                    <label for="product-category">Product Category:</label>
+                    <select id="product-category" name="product-category">
+                        <option value="beverage">Beverage</option>
+                        <option value="snack">Snack</option>
+                        <option value="dessert">Dessert</option>
+                    </select>
+                    <label for="price">Price:</label>
+                    <input type="text" id="price" name="price" required>
+                    <button type="submit">Add Product</button>
+                </form>
+            </section>
+            <section id="contact" class="contact">
+                <h2>Contact Us</h2>
+                <p>Phone: 123-456-7890</p>
+                <p>Email: contact@ourcafe.com</p>
+                <p>Address: 123 Cafe St, Coffee City</p>
+            </section>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Our Café. All rights reserved.</p>
+    </footer>
+</body>
+</html>
